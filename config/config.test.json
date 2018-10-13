@@ -1,0 +1,13 @@
+{
+    "app": {
+        "port": 3000
+    },
+    "db": {
+        "db_url": "mongodb://localhost/db_lgsys",
+        "host": "mongodb://localhost",
+        "port": 27017,
+        "db_name": "db_lgsys",
+        "user": "",
+        "password": ""
+    }
+}
