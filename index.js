@@ -26,9 +26,9 @@ app.use(cors());
 // Express Validator
 app.use(expressValidator({
     errorFormatter: function(param, msg, value) {
-        var namespace = param.split('.'),
-            var root = namespace.shift(),
-                var formParam = root;
+        var namespace = param.split('.');
+        var root = namespace.shift();
+        var formParam = root;
 
         while (namespace.length) {
             formParam += '[' + namespace.shift() + ']';
