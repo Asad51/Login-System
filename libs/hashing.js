@@ -1,16 +1,21 @@
-var crypto = require('crypto-js');
+var crypto = require('crypto');
 
 var dataEncryption = {};
 
 dataEncryption.encrypt = function(text, key) {
-    var cipherText = crypto.HmacSHA1(text, key);
-    return cipherText.toString();
+	const cipher = crypto.createCipher('aes192', key);
+	let encrypted = cipher.update(text, 'utf8', 'hex');
+	encrypted += cipher.final('hex');
+
+	return encrypted;
 }
 
 dataEncryption.decrypt = function(cipherText, key) {
-    var bytes = crypto.HmacSHA1(cipherText.toString(), key);
-    var text = bytes.toString(crypto.enc.Utf8);
-    return text;
+	const decipher = crypto.createDecipher('aes192', key);
+	let decrypted = decipher.update(cipherText, 'hex', 'utf8');
+	decrypted += decipher.final('utf8');
+
+	return decrypted;
 }
 
 module.exports = dataEncryption;

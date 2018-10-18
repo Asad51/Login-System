@@ -134,5 +134,28 @@ router.post("/login", function(req, res, next) {
     }
 });
 
+/******* User Info ***************/
+/*********************************/
+router.get("/user/:userid", function(req, res, next) {
+    var userid = req.params.userid;
+    console.log(userid);
+    var userName = crypto.encrypt(userid.toLowerCase(), userNameKey);
+    User.findOne({ userName: userName }, function(err, user) {
+        if (err) {
+            res.send("Error in finding user.");
+        } else {
+            if (!user) {
+                res.send("Can't find user.");
+            } else {
+                user.userName = userid;
+                user.email = crypto.decrypt(user.email, emailKey);
+                user.password = crypto.decrypt(user.password, passwordKey);
+                res.send(user);
+                console.log(user);
+            }
+        }
+    });
+});
+
 module.exports = router;
 /**********************************/
