@@ -15,11 +15,12 @@ var dbUrl = config.db.db_url;
 var port = process.env.PORT || config.app.port;
 
 var users = require("./routes/users.js");
+var index = require('./routes/index');
 
 /*** Using Express Middleware *****/
 /**********************************/
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors());
 
@@ -43,16 +44,12 @@ app.use(expressValidator({
 
 /******** Http Request Handling **********/
 /*****************************************/
-app.get("/", function(req, res, next) {
-    res.send("Home");
-});
-
 app.use("/", users);
+app.use('/', index);
 
 // catch 404 error handler
 app.use(function(req, res, next) {
-    res.status(404);
-    res.send("Page Not Found")
+    res.status(404).send({ "error_msg": "Page Not Found" });
 });
 
 // error handler

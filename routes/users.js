@@ -10,7 +10,7 @@ var passwordKey = "&hs#D6";
 /******* User Registration ****************/
 /******************************************/
 router.post('/register', function(req, res, next) {
-    if (req.body == null || req.body == undefined) {
+    if (Object.keys(req.body).length !== 5) {
         res.send("Enter valid Info.")
     } else {
         var name = req.body.name;
@@ -31,7 +31,7 @@ router.post('/register', function(req, res, next) {
 
         if (errors) {
             console.log(errors);
-            res.send(errors);
+            res.status(400).send({ "error_msg": "In valid Format" });
         } else {
             userName = crypto.encrypt(userName.toLowerCase(), userNameKey);
             email = crypto.encrypt(email.toLowerCase(), emailKey);
@@ -42,7 +42,7 @@ router.post('/register', function(req, res, next) {
                 },
                 function(err, user) {
                     if (user) {
-                        res.send("User or Email is Already exits");
+                        res.send({ "error_msg": "User or Email is Already exits" });
                     } else {
                         var newUser = new User({
                             name: name,
@@ -52,11 +52,12 @@ router.post('/register', function(req, res, next) {
                         });
                         newUser.save(newUser, function(err, user) {
                             if (err) {
-                                res.send('Internal Error');
+                                res.status(500).send({ "error_msg": 'Internal Error' });
                                 console.log("Can't insert into database")
                             } else {
-                                res.send('You are registered and can now login');
+                                res.status(201).send({ "success_msg": "Registration Successful." });
                             }
+                            console.log(user);
                         });
                     }
 
@@ -65,11 +66,48 @@ router.post('/register', function(req, res, next) {
     }
 });
 
+/****** User Checking *************/
+/**********************************/
+router.post('/check_user', function(req, res, next) {
+    if (Object.keys(req.body).length !== 1) {
+        res.send("Invalid Format")
+    } else {
+        var email = req.body.email;
+        var userName = req.body.userName;
+
+        if (!userName && !email) {
+            res.send({ "error_msg": "Enter valid info" });
+        } else {
+            if (userName) {
+                userName = crypto.encrypt(userName.toLowerCase(), userNameKey);
+                User.findOne({ userName: userName }, function(err, user) {
+                    if (user) {
+                        res.send("Username is already used.");
+                    } else {
+                        res.status(200).send({ "success_msg": "" });
+                    }
+                });
+            } else {
+                email = crypto.encrypt(email.toLowerCase(), emailKey);
+                User.findOne({ email: email }, function(err, user) {
+                    if (user) {
+                        res.send("Email is already used.");
+                    } else {
+                        res.status(200).send({ "success_msg": "" });
+                    }
+                })
+            }
+
+        }
+
+    }
+});
+
 /************ User Login **********/
 /**********************************/
 router.post("/login", function(req, res, next) {
-    if (req.body == null || req.body == undefined) {
-        res.send("Enter Valid Info")
+    if (Object.keys(req.body).length !== 2) {
+        res.send("Invalid Format");
     } else {
         var email = req.body.email;
         var password = req.body.password;
@@ -90,6 +128,7 @@ router.post("/login", function(req, res, next) {
                 } else {
                     res.send("Email or password is wrong");
                 }
+                console.log(req.body);
             });
         }
     }
