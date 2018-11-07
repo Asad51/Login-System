@@ -1,12 +1,18 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var http = require('http');
 var debug = require('debug')('mean-app:server');
 var cors = require('cors');
 var expressValidator = require('express-validator');
+var expressSession = require('express-session');
 var app = express();
 mongoose.Promise = require("bluebird");
+var passport = require("passport");
+var localStrategy = require('passport-local').Strategy;
+var flash = require('connect-flash');
+var morgan = require('morgan');
 
 /***********User Modules *************/
 /*************************************/
@@ -14,15 +20,29 @@ var config = require('./config/config.js');
 var dbUrl = config.db.db_url;
 var port = process.env.PORT || config.app.port;
 
+var secretKeys = require('./config/secret.keys.js');
+
 var users = require("./routes/users.js");
 var index = require('./routes/index');
 
 /*** Using Express Middleware *****/
 /**********************************/
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(cookieParser(secretKeys.session));
+app.use(expressSession({
+    secret: secretKeys.session,
+    saveUninitialized: true,
+    resave: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(cors());
+app.use(flash());
+app.use(morgan('dev'));
 
 // Express Validator
 app.use(expressValidator({

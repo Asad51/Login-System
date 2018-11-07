@@ -3,11 +3,24 @@ var router = express.Router();
 
 var User = require('../models/users');
 
-var emailKey = "^5F&hs";
-var userNameKey = "Uf%f2";
-
-router.get('/', function(req, res, next) {
-    res.status(200).send("Home Page");
+router.get('/', function(req, res) {
+	User.find({}, function(err, users) {
+		if (err) {
+			res.send("Database Error");
+		} else {
+			res.send("Total number of users is " + users.length);
+		}
+	});
+	console.log(req.signedCookies);
 });
+
+function ensureAuthenticated(req, res, next) {
+	if (req.isAuthenticated()) {
+		return next();
+	} else {
+		//req.flash('error_msg','You are not logged in');
+		res.redirect('/login');
+	}
+}
 
 module.exports = router;
