@@ -1,4 +1,4 @@
-
+var crypto = require('crypto');
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
@@ -10,7 +10,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 module.exports = function(req, res, next){
-	var userid = req.params.userid;
+	var userid = req.session.passport.user['userName'];
     console.log(userid);
     var userName = crypto.encrypt(userid.toLowerCase(), secretKeys.userName);
     User.findOne({ userName: userName }, function(err, user) {

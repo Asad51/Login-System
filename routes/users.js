@@ -25,15 +25,22 @@ app.route('/check-user')
 /**********************************/
 app.route('/signin')
     .get(signin.signinPage)
-    .post(signin.authenticate, signin.userInfo);
+    .post( signin.userInfo);
 
 /*********** Dashboard ***********/
 /*********************************/
-//app.get("/dashboard", );
+app.get("/dashboard", dashboard);
+
+app.get('/session', function(req, res, next){
+	console.log(req.session.passport);
+	res.send("Session");
+});
 
 /******** Logout *****************/
 /*********************************/
-app.get('logout', signin.logout);
+app.route('/signout')
+	.get(signin.signout);
+
 
 module.exports = app;
 /**********************************/

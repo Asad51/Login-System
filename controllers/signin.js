@@ -16,6 +16,7 @@ passport.use(new LocalStrategy(
                 throw err;
             }
             if (!user) {
+            	console.log("Incorrect username.")
 		        return done(null, false, { message: 'Incorrect username.' });
 		    }
 		    if (password != user.password) {
@@ -27,30 +28,51 @@ passport.use(new LocalStrategy(
 ));
 
 passport.serializeUser(function(user, done) {
-    done(null, user.id);
+    done(null, {
+        userName: user.userName
+    });
 });
 
-passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-        done(err, user);
-    });
+passport.deserializeUser(function(userName, done) {
+    User.findOne({userName: userName})
+    	.exec()
+    	.then( user => {
+    		done(null, user['userName']);
+    	})
+    	.catch( err => {
+    		done(err, null);
+    	});
+
+    	/*{
+    	if(!user){
+    		done(err, null);
+    	}
+    	else{
+	        done(null, user['userName']);
+	    }
+    });*/
 });
 
 module.exports = {
 	signinPage: (req, res, next) => {
+		console.log(`req.session.passport: ${JSON.stringify(req.session.passport)}`);
 		res.status(200).send({ "title": "Login to system." });
 	},
 
-	authenticate: passport.authenticate('local'),
-
 	userInfo: (req,  res, next) => {
-		res.send("Login successful.");
+		passport.authenticate('local', (err, user, info) => {
+		    console.log(user);
+		    req.login(user, (err) => {
+		      	console.log(`req.session.passport: ${JSON.stringify(req.session.passport.user['userName'])}`);
+		      	return res.send('You were authenticated & logged in!\n');
+		    })
+		})(req, res, next);
 	},
 
-	logout: (req, res, next) => {
+	signout: (req, res, next) => {
 		req.logout();
     	req.flash('success_msg', 'You are logged out');
-    	res.redirect('/login');
+    	res.redirect('/signin');
 	}
 }
 
