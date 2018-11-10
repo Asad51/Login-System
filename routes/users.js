@@ -25,11 +25,11 @@ app.route('/check-user')
 /**********************************/
 app.route('/signin')
     .get(signin.signinPage)
-    .post( signin.userInfo);
+    .post(signin.ensureAuthenticated, signin.authenticate, signin.userInfo);
 
 /*********** Dashboard ***********/
 /*********************************/
-app.get("/dashboard", dashboard);
+app.get("/dashboard", dashboard.authenticate, dashboard.details);
 
 app.get('/session', function(req, res, next){
 	console.log(req.session.passport);
