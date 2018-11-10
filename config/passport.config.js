@@ -45,3 +45,5 @@ passport.ensureAuthenticated = function(req, res, next) {
 };
 
 module.exports = passport;
+
+/*******************************************/

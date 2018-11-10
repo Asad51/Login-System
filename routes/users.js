@@ -31,11 +31,6 @@ app.route('/signin')
 /*********************************/
 app.get("/dashboard", dashboard.authenticate, dashboard.details);
 
-app.get('/session', function(req, res, next){
-	console.log(req.session.passport);
-	res.send("Session");
-});
-
 /******** Logout *****************/
 /*********************************/
 app.route('/signout')
@@ -43,4 +38,5 @@ app.route('/signout')
 
 
 module.exports = app;
+
 /**********************************/

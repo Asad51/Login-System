@@ -19,4 +19,5 @@ dataEncryption.decrypt = function(cipherText, key) {
 }
 
 module.exports = dataEncryption;
+
 /********************************************/
