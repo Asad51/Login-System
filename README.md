@@ -4,7 +4,9 @@ Simple user login system using NodeJs, ExpressJs, MongoDB and Angular.
 
 ## Setup
 `git clone https://github.com/Asad51/Login-System.git`
-`cd cd Login-System`
+
+`cd Login-System`
+
 `npm install`
 
 ## MongoDB Server
