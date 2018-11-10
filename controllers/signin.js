@@ -5,8 +5,6 @@ module.exports = {
 		res.status(200).send({ "title": "Login to system." });
 	},
 
-    ensureAuthenticated: passport.ensureAuthenticated,
-
 	authenticate: passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true}),
 
 	userInfo: (req,  res, next) => {

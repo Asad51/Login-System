@@ -9,14 +9,15 @@ var secretKeys = require('../config/secret.keys.js');
 var signup = require('../controllers/signup.js');
 var signin = require('../controllers/signin.js');
 var dashboard = require('../controllers/dashboard.js');
+var authenticate = require('../controllers/authenticate.js');
 
 /******* User Registration ****************/
 /******************************************/
 app.route('/signup')
     .get(signup.signupPage)
-    .post(signup.userInfo);
+    .post(authenticate.ensureAuthenticated, signup.userInfo);
 
-/****** User Checking *************/
+/*** Checking Existence of User ***/
 /**********************************/
 app.route('/check-user')
     .post(signup.userCheck);
@@ -25,11 +26,11 @@ app.route('/check-user')
 /**********************************/
 app.route('/signin')
     .get(signin.signinPage)
-    .post(signin.ensureAuthenticated, signin.authenticate, signin.userInfo);
+    .post(authenticate.ensureAuthenticated, signin.authenticate, signin.userInfo);
 
 /*********** Dashboard ***********/
 /*********************************/
-app.get("/dashboard", dashboard.authenticate, dashboard.details);
+app.get("/dashboard", dashboard.ensureAuthenticated, dashboard.details);
 
 /******** Logout *****************/
 /*********************************/

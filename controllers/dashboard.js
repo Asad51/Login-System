@@ -4,7 +4,7 @@ var User = require('../models/users.js');
 var secretKeys = require('../config/secret.keys.js');
 
 module.exports = {
-    authenticate: function(req, res, next) {
+    ensureAuthenticated: function(req, res, next) {
         if (req.isAuthenticated()) {
             return next();
         } else {
@@ -22,11 +22,10 @@ module.exports = {
                 if (!user) {
                     res.send("Can't find user.");
                 } else {
-                    user.userName = crypto.decrypt(user.userName, secretKeys.userName);
-                    user.email = crypto.decrypt(user.email, secretKeys.email);
-                    user.password = crypto.decrypt(user.password, secretKeys.password);
+                    user.userName = crypto.decrypt(user.userName, secretKeys.userNameKey);
+                    user.email = crypto.decrypt(user.email, secretKeys.emailKey);
+                    user.password = crypto.decrypt(user.password, secretKeys.passwordKey);
                     res.send(user);
-                    console.log(user);
                 }
             }
         })

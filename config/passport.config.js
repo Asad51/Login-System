@@ -5,10 +5,10 @@ var User = require('../models/users');
 var crypto = require('../libs/hashing');
 var secretKeys = require('./secret.keys.js');
 
-passport.use(new LocalStrategy({ usernameField: "userName", passwordField: "password" },
+passport.use(new LocalStrategy(
+    { usernameField: "userName", passwordField: "password" },
     function(username, password, done) {
-        var userName = crypto.encrypt(username.toLowerCase(), secretKeys.userName);
-        var password = crypto.encrypt(password, secretKeys.password);
+        var userName = crypto.encrypt(username.toLowerCase(), secretKeys.userNameKey, secretKeys.userNameIV);
         User.findOne({ userName: userName }, function(err, user) {
             if (err) {
                 console.log("Error in login");
@@ -18,6 +18,7 @@ passport.use(new LocalStrategy({ usernameField: "userName", passwordField: "pass
                 console.log("Incorrect username.")
                 return done(null, false, { message: 'Incorrect username.' });
             }
+            user.password = crypto.decrypt(user.password, secretKeys.passwordKey);
             if (password != user.password) {
                 return done(null, false, { message: 'Incorrect password.' });
             }
@@ -35,14 +36,6 @@ passport.deserializeUser(function(id, done) {
         done(err, user);
     });
 });
-
-passport.ensureAuthenticated = function(req, res, next) {
-    if (req.isAuthenticated()) {
-        res.redirect('/dashboard');
-    } else {
-        next();
-    }
-};
 
 module.exports = passport;
 

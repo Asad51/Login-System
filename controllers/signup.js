@@ -30,9 +30,9 @@ module.exports = {
 	        if (errors) {
 	            res.send(errors);
 	        } else {
-	            userName = crypto.encrypt(userName.toLowerCase(), secretKeys.userName);
-	            email = crypto.encrypt(email.toLowerCase(), secretKeys.email);
-	            password = crypto.encrypt(password, secretKeys.password);
+	            userName = crypto.encrypt(userName.toLowerCase(), secretKeys.userNameKey, secretKeys.userNameIV);
+	            email = crypto.encrypt(email.toLowerCase(), secretKeys.emailKey, secretKeys.emailIV);
+	            password = crypto.encrypt(password, secretKeys.passwordKey);
 	            //checking for email and username are already taken
 	            User.findOne({
 	                    $or: [{ userName: userName }, { email: email }]
@@ -55,7 +55,6 @@ module.exports = {
 	                                req.flash('success_msg', 'You are registered and can now login');
 	                                res.redirect('/signin');
 	                            }
-	                            console.log(user);
 	                        });
 	                    }
 
@@ -75,7 +74,7 @@ module.exports = {
 	            res.send({ "error_msg": "Enter valid info" });
 	        } else {
 	            if (userName) {
-	                userName = crypto.encrypt(userName.toLowerCase(), secretKeys.userName);
+	                userName = crypto.encrypt(userName.toLowerCase(), secretKeys.userNameKey, secretKeys.userNameIV);
 	                User.findOne({ userName: userName }, function(err, user) {
 	                    if (user) {
 	                        res.send("Username is already used.");
@@ -84,7 +83,7 @@ module.exports = {
 	                    }
 	                });
 	            } else {
-	                email = crypto.encrypt(email.toLowerCase(), secretKeys.email);
+	                email = crypto.encrypt(email.toLowerCase(), secretKeys.emailKey, secretKeys.emailIV);
 	                User.findOne({ email: email }, function(err, user) {
 	                    if (user) {
 	                        res.send("Email is already used.");
