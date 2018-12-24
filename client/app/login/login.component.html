@@ -1,3 +1,39 @@
-<div class="page-height">
-    ===
+<div class="page-height container-fluid form-style">
+    <form [formGroup]="loginForm" (ngSubmit)="onLoginFormSubmit()" role="form" autocomplete="off">
+        <h1 class="h3 mb-3 font-weight-normal">Please Login</h1>
+
+        <div class="form-group">
+            <label for="userName">Username : </label>
+            <input [class.is-invalid]="userName.invalid && (userName.touched || userName.dirty)" type="text" name="username"
+                id="username" class="form-control" placeholder="Username" formControlName="userName" />
+            <div *ngIf="userName.invalid && (userName.dirty || userName.touched)" class="text-danger">
+                <small *ngIf="userName.errors.required">
+                    Username is required.
+                </small>
+                <small *ngIf="userName.errors.minlength">
+                    Username must be at least 4 characters long.
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password : </label>
+            <input [class.is-invalid]="password.invalid && (password.touched || password.dirty)" type="password" name="password"
+                id="password" class="form-control" placeholder="Password" formControlName="password" />
+            <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-danger">
+                <small *ngIf="password.errors.required">
+                    Password is required.
+                </small>
+                <small *ngIf="password.errors.minlength">
+                    Password must be at least 4 characters long.
+                </small>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary button" [disabled]="!loginForm.valid">Sign In</button>
+        <div class="row my-3">
+            <h4 class="float-left">Don't Have Account? <a routerLink='/register'>Sign Up</a></h4>
+        </div>
+    </form>
+
 </div>

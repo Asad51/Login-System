@@ -15,7 +15,7 @@ passport.use(new LocalStrategy({
             userName: userName
         }, function (err, user) {
             if (err) {
-                throw err;
+                return done(null, false);
             }
             if (!user) {
                 return done(null, false);

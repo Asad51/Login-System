@@ -8,7 +8,7 @@ app.route('/signup')
     .post(signup.userInfo);
 
 app.route('/signin')
-    .post(signin.authenticate, signin.userInfo);
+    .post(signin.userInfo);
 
 app.get("/dashboard", dashboard.ensureAuthenticated, dashboard.details);
 

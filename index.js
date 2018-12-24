@@ -9,7 +9,7 @@ var app = require('./config/app.config.js');
 var config = require('./config/config.js');
 var errorHandler = require('./config/errorHanlder.js');
 
-var dbUrl = config.db.db_url;
+var dbUrl = 'mongodb://localhost/db_lgsys';
 var port = process.env.PORT || config.app.port;
 
 var users = require("./routes/users.js");
