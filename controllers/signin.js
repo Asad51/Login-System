@@ -1,4 +1,4 @@
-let passport = require('../config/passport.config.js');
+let passport = require('../config/passport.config');
 let secretKeys = require('../config/secret.keys');
 let jwt = require('jsonwebtoken');
 
@@ -15,7 +15,7 @@ module.exports = {
                     error: ["Incorrect Username or Password"]
                 });
             } else {
-                req.login(user, (err) => {
+                req.logIn(user, (err) => {
                     if (err) {
                         return res.status(500).send({
                             error: ["Server Error"]
@@ -23,7 +23,8 @@ module.exports = {
                     }
                     let token = jwt.sign({
                         id: user.id,
-                        name: user.name
+                        name: user.name,
+                        userName: user.userName
                     }, secretKeys.jwt, {
                         algorithm: 'HS256'
                     });

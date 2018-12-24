@@ -4,28 +4,36 @@ var User = require('../models/users.js');
 var secretKeys = require('../config/secret.keys.js');
 
 module.exports = {
-    ensureAuthenticated: function(req, res, next) {
+    ensureAuthenticated: function (req, res, next) {
         if (req.isAuthenticated()) {
             return next();
         } else {
-            req.flash('error_msg','You are not logged in');
-            res.redirect('/signin');
+            res.status(401).send({
+                'error': ['You are not logged in']
+            });
         }
     },
 
-    details: function(req, res, next) {
+    details: function (req, res, next) {
         var userid = req.user.id;
-        User.findById(userid, function(err, user) {
+        User.findById(userid, function (err, user) {
             if (err) {
-                res.send("Error in finding user.");
+                res.status(500).send({
+                    error: ["Server Error"]
+                });
             } else {
                 if (!user) {
-                    res.send("Can't find user.");
+                    res.status(401).send({
+                        error: "You are not logged in."
+                    });
                 } else {
                     user.userName = crypto.decrypt(user.userName, secretKeys.userNameKey);
                     user.email = crypto.decrypt(user.email, secretKeys.emailKey);
-                    user.password = crypto.decrypt(user.password, secretKeys.passwordKey);
-                    res.send(user);
+                    res.status(200).send({
+                        name: user.name,
+                        userName: user.userName,
+                        email: user.email
+                    });
                 }
             }
         })
