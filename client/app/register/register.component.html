@@ -1,18 +1,81 @@
-<form class="form-signup" action="/register" method="POST">
-    <h1 class="h3 mb-3 font-weight-normal">Please Sign Up</h1>
-    <label for="name" class="sr-only">Name</label>
-    <input type="text" id="name" name="name" class="form-control" placeholder="Full name" required autofocus>
+<div class="page-height container-fluid form-style">
+    <form [formGroup]="registrationForm" (ngSubmit)="onRegistrationFormSubmit()" role="form" autocomplete="off">
+        <h1 class="h3 mb-3 font-weight-normal">Please Sign Up</h1>
+        <div class="form-group">
+            <label for="name">Name : </label>
+            <input [class.is-invalid]="name.invalid && (name.touched || name.dirty)" type="text" name="name" id="name"
+                class="form-control" placeholder="name" formControlName="name" />
+            <div *ngIf="name.invalid && (name.dirty || name.touched)" class="text-danger">
+                <small *ngIf="name.errors.required">
+                    Name is required.
+                </small>
+                <small *ngIf="name.errors.minlength">
+                    Name must be at least 4 characters long.
+                </small>
+            </div>
+        </div>
 
-    <label for="userName" class="sr-only">Email address</label>
-    <input type="text" id="userName" name="userName" class="form-control" placeholder="Username" required>
+        <div class="form-group">
+            <label for="userName">Username : </label>
+            <input [class.is-invalid]="userName.invalid && (userName.touched || userName.dirty)" type="text" name="username"
+                id="username" class="form-control" placeholder="Username" formControlName="userName" />
+            <div *ngIf="userName.invalid && (userName.dirty || userName.touched)" class="text-danger">
+                <small *ngIf="userName.errors.required">
+                    Username is required.
+                </small>
+                <small *ngIf="userName.errors.minlength">
+                    Username must be at least 4 characters long.
+                </small>
+            </div>
+        </div>
 
-    <label for="email" class="sr-only">Email address</label>
-    <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required>
+        <div class="form-group">
+            <label for="email">Email : </label>
+            <input [class.is-invalid]="email.invalid && (email.touched || email.dirty)" type="email" name="email" id="email"
+                class="form-control" placeholder="Email" formControlName="email" />
+            <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-danger">
+                <small *ngIf="email.errors.required">
+                    Email is required.
+                </small>
+                <small *ngIf="email.errors.email">
+                    Should be a valid email.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password">Password : </label>
+            <input [class.is-invalid]="password.invalid && (password.touched || password.dirty)" type="password" name="password"
+                id="password" class="form-control" placeholder="Password" formControlName="password" />
+            <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-danger">
+                <small *ngIf="password.errors.required">
+                    Password is required.
+                </small>
+                <small *ngIf="password.errors.minlength">
+                    Password must be at least 4 characters long.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="confirm-password">Confirm Password : </label>
+            <input [class.is-invalid]="confirmPassword.invalid && (confirmPassword.touched || confirmPassword.dirty)"
+                type="password" name="confirm-password" id="confirm-password" class="form-control" placeholder="Confirm Password"
+                formControlName="confirmPassword" />
+            <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)" class="text-danger">
+                <small *ngIf="confirmPassword.errors.required">
+                    Password is required.
+                </small>
+                <small *ngIf="confirmPassword.errors.minlength">
+                    Password must be at least 4 characters long.
+                </small>
+                <small *ngIf="confirmPassword.errors?.MatchPassword">
+                    Password Don't Match
+                </small>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary button" [disabled]="!registrationForm.valid">Sign Up</button>
+        <div class="row my-3">
+            <h4 class="float-left">Already Have Account? <a routerLink='/login'>Sign In</a></h4>
+        </div>
+    </form>
 
-    <label for="password" class="sr-only">Password</label>
-    <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password" required>
-    <label for="rePassword" class="sr-only">Repeat Password</label>
-    <input type="rePassword" id="rePassword" name="rePassword" class="form-control" placeholder="Repeat Password" required>
-
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-</form>
+</div>

@@ -12,13 +12,9 @@ var errorHandler = require('./config/errorHanlder.js');
 var dbUrl = config.db.db_url;
 var port = process.env.PORT || config.app.port;
 
-var secretKeys = require('./config/secret.keys.js');
-
 var users = require("./routes/users.js");
 var index = require('./routes/index');
 
-/******** Http Request Handling **********/
-/*****************************************/
 app.use("/", users);
 app.use('/', index);
 
@@ -63,7 +59,10 @@ function onListening() {
         'port ' + addr.port;
     debug('Listening on ' + bind);
     console.log("Server running at port " + bind)
-    mongoose.connect(dbUrl, errorHandler.db.onConnect);
+    mongoose.connect(dbUrl, {
+            useNewUrlParser: true
+        },
+        errorHandler.db.onConnect);
 }
 
 function onClose(error) {

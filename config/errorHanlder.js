@@ -1,7 +1,7 @@
 var app = require('express')();
 
 var db = {
-    onConnect: function(err) {
+    onConnect: function (err) {
         if (err) {
             console.log("Can't connect database");
         } else {
@@ -9,7 +9,7 @@ var db = {
         }
     },
 
-    onDisconnect: function(err) {
+    onDisconnect: function (err) {
         if (err) {
             console.log("Can't disconnect database");
         } else {
@@ -19,23 +19,28 @@ var db = {
 }
 
 // catch 404 error handler
-app.use(function(req, res, next) {
-	res.status(404).send({ "error_msg": "Page Not Found" });
+app.use(function (req, res, next) {
+    res.status(404).send({
+        "error": ["Page Not Found"]
+    });
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-	// set locals, only providing error in development
-	res.locals.message = err.message;
-	res.locals.error = req.app.get('env') === 'development' ? err : {};
-	// render the error page
-	res.status(err.status || 500);
-    res.send('Server  Error');
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // render the error page
+    res.status(err.status || 500);
+    res.send({
+        error: ['Server  Error']
+    });
     console.log(err);
 });
 
 module.exports = {
-	app, db
+    app,
+    db
 }
 
 /************************************/

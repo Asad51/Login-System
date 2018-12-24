@@ -5,31 +5,34 @@ var secretKeys = require('../config/secret.keys.js');
 async function findUser(query, res) {
     let user = await User.findOne(query)
         .catch((err) => {
-            res.send("Server Error");
+            res.status(500).send({
+                error: ["Server Error"]
+            });
+            return null;
         });
     return user;
 }
 
 function createUser(user, req, res) {
-    user.save(user, function(err, user) {
+    user.save(user, function (err, user) {
         if (err) {
-            res.status(500).send({ "error_msg": 'Internal Error' });
-            console.log("Can't insert into database")
+            res.status(500).send({
+                "error": ['Internal Error']
+            });
         } else {
-            req.flash('success_msg', 'You are registered and can now login');
-            res.redirect('/signin');
+            res.status(201).send({
+                success: 'You are registered and can now login'
+            });
         }
     });
 }
 
 module.exports = {
-    signupPage: function(req, res, next) {
-        res.status(200).send({ "title": "Create New Account" });
-    },
-
-    userInfo: async function(req, res, next) {
+    userInfo: async function (req, res, next) {
         if (Object.keys(req.body).length !== 5) {
-            res.send("Invalid format");
+            res.status(422).send({
+                error: ["Invalid format"]
+            });
         } else {
             var name = req.body.name;
             var email = req.body.email;
@@ -47,24 +50,32 @@ module.exports = {
             var errors = req.validationErrors();
 
             if (errors) {
-                res.send(errors);
+                res.status(422).send({
+                    error: errors
+                });
             } else {
                 userName = crypto.encrypt(userName.toLowerCase(), secretKeys.userNameKey, secretKeys.userNameIV);
                 email = crypto.encrypt(email.toLowerCase(), secretKeys.emailKey, secretKeys.emailIV);
                 password = crypto.encrypt(password, secretKeys.passwordKey);
 
-                let user = await findUser({ userName: userName }, res);
-                let ep = {};
+                let user = await findUser({
+                    userName: userName
+                }, res);
+                let ep = [];
                 if (user) {
-                    ep.userName = "Username is exist";
+                    ep.push("Username is exist");
                 }
-                users = await findUser({ email: email }, res);
+                users = await findUser({
+                    email: email
+                }, res);
                 if (user) {
-                    ep.email = "Email is exist";
+                    ep.push("Email is exist");
                 }
 
-                if (ep) {
-                    res.send(ep);
+                if (ep.length > 0) {
+                    res.status(422).send({
+                        error: ep
+                    });
                 } else {
                     var newUser = new User({
                         name: name,
@@ -76,32 +87,5 @@ module.exports = {
                 }
             }
         }
-    },
-
-    userCheck: (req, res, next) => {
-        if (Object.keys(req.body).length !== 1) {
-            res.send("Invalid Format")
-        } else {
-            var email = req.body.email;
-            var userName = req.body.userName;
-
-            if (!userName && !email) {
-                res.send({ "error_msg": "Enter valid info" });
-            } else {
-                if (userName) {
-                    userName = crypto.encrypt(userName.toLowerCase(), secretKeys.userNameKey, secretKeys.userNameIV);
-                    if (findUser({ userName: userName })) {
-                        res.send("Username is already used.");
-                    }
-                } else {
-                    email = crypto.encrypt(email.toLowerCase(), secretKeys.emailKey, secretKeys.emailIV);
-                    if (findUser({ email: email })) {
-                        res.send("Email is already used.");
-                    }
-                }
-            }
-        }
     }
 }
-
-/**********************************/
